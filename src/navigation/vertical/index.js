@@ -5,8 +5,8 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
   {
-    title: 'Second page',
-    to: { name: 'second-page' },
+    title: 'Calender',
+    to: { name: 'calender' },
     icon: { icon: 'tabler-file' },
   },
 ]
