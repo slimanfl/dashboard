@@ -1,5 +1,4 @@
 <script setup>
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
@@ -7,169 +6,198 @@ import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustratio
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import axios from 'axios'
+import { VForm } from 'vuetify/components/VForm'
+const themes = [
+  {
+    name: 'light',
+    icon: 'tabler-sun-high',
+  },
+  {
+    name: 'dark',
+    icon: 'tabler-moon-stars',
+  },
+  {
+    name: 'system',
+    icon: 'tabler-device-desktop-analytics',
+  },
+]
+const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
+const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
-definePage({ meta: { layout: 'blank' } })
-
-const form = ref({
-  email: '',
-  password: '',
-  remember: false,
+definePage({
+  meta: {
+    layout: 'blank',
+    unauthenticatedOnly: true,
+  },
 })
 
 const isPasswordVisible = ref(false)
-const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
-const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
+const route = useRoute()
+const router = useRouter()
+// const ability = useAbility()
+
+const errors = ref({
+  email: undefined,
+  password: undefined,
+})
+ const minLengthValidator=(value) => {
+  if (value && value.length < 8) {
+        return 'Password must be at least 8 characters long.';
+      }
+      return true; // Validation passed
+  }
+const Messageres = ref('')
+const alerDialogSuccess = ref(false)
+const alerDialogFault = ref(false)
+const refVForm = ref()
+
+const credentials = ref({
+  email: '',
+  password: '',
+})
+
+const rememberMe = ref(false)
+
+const login = async () => {
+  
+  const res =await $api(`http://localhost:3000/sign-in`,{
+    method:'post',
+    body:{
+      email:credentials.value.email,
+      password:credentials.value.password
+    }})
+ 
+
+    console.log(res)
+        Messageres.value = 'login successfully'
+        alerDialogSuccess.value = true
+        // useCookie('userAbilityRules').value = userAbilityRules
+        // ability.update(userAbilityRules)
+        useCookie('userData').value = res.data
+        useCookie('accessToken').value = res.token
+        // window.localStorage.setItem('permissions', JSON.stringify(res.data.data.permissions))
+        nextTick(() => {
+          router.replace(route.query.to ? String(route.query.to) : '/calender')
+        })
+
+}
+ 
+
+
+const onSubmit = () => {
+  refVForm.value?.validate().then(({ valid: isValid }) => {
+    if (isValid)
+      login()
+  })
+}
+const { locale } = useI18n({ useScope: 'global' })
+const changeLanguage = (lang) => {
+  window.location.reload();
+  locale.value = lang.i18nLang;
+}
 </script>
-
 <template>
-  <RouterLink to="/">
-    <div class="auth-logo d-flex align-center gap-x-3">
-      <VNodeRenderer :nodes="themeConfig.app.logo" />
-      <h1 class="auth-title">
-        {{ themeConfig.app.title }}
-      </h1>
-    </div>
-  </RouterLink>
+  <div class="error-login">
+    <VAlert density="default" color="success" variant="tonal" v-if="alerDialogSuccess">
+      {{ Messageres }}
+    </VAlert>
 
-  <VRow
-    no-gutters
-    class="auth-wrapper bg-surface"
-  >
-    <VCol
-      md="8"
-      class="d-none d-md-flex"
-    >
+    <VAlert density="default" color="error" variant="tonal" v-if="alerDialogFault">
+      {{ Messageres }}
+    </VAlert>
+  </div>
+  <div class="auth-logo d-flex align-center gap-x-3">
+  
+    <h1 class="auth-title">
+      {{ themeConfig.app.title }}
+    </h1>
+  </div>
+  <div class="login-header">
+    <ThemeSwitcher :themes="themes" />
+    <IconBtn>
+      <VIcon size="24" icon="tabler-language" />
+
+      <!-- Menu -->
+      <VMenu activator="parent" offset="12px">
+        <!-- List -->
+        <VList :selected="[locale]" color="primary" min-width="175px">
+          <!-- List item -->
+          <VListItem v-for="lang in themeConfig.app.i18n.langConfig" :key="lang.i18nLang" :value="lang.i18nLang"
+            @click="changeLanguage(lang)">
+            <!-- Language label -->
+            <VListItemTitle>{{ lang.label }}</VListItemTitle>
+          </VListItem>
+        </VList>
+      </VMenu>
+    </IconBtn>
+  </div>
+
+  <VRow no-gutters class="auth-wrapper bg-surface">
+    <VCol md="8" class="d-none d-md-flex">
       <div class="position-relative bg-background w-100 me-0">
-        <div
-          class="d-flex align-center justify-center w-100 h-100"
-          style="padding-inline: 6.25rem;"
-        >
-          <VImg
-            max-width="613"
-            :src="authThemeImg"
-            class="auth-illustration mt-16 mb-2"
-          />
+        <div class="d-flex align-center justify-center w-100 h-100" style="padding-inline: 6.25rem;">
+          <VImg max-width="613" :src="authThemeImg" class="auth-illustration mt-16 mb-2" />
         </div>
-
-        <img
-          class="auth-footer-mask"
-          :src="authThemeMask"
-          alt="auth-footer-mask"
-          height="280"
-          width="100"
-        >
+        <img class="auth-footer-mask" :src="authThemeMask" alt="auth-footer-mask" height="280" width="100">
       </div>
     </VCol>
 
-    <VCol
-      cols="12"
-      md="4"
-      class="auth-card-v2 d-flex align-center justify-center"
-    >
-      <VCard
-        flat
-        :max-width="500"
-        class="mt-12 mt-sm-0 pa-4"
-      >
+    <VCol cols="12" md="4" class="auth-card-v2 d-flex align-center justify-center">
+      <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Welcome to <span class="text-capitalize"> {{ themeConfig.app.title }} </span>! 👋🏻
+            {{ $t('Welcome to') }} <span class="text-capitalize"> Dasborad </span>! 👋🏻
           </h4>
           <p class="mb-0">
-            Please sign-in to your account and start the adventure
+            {{ $t('Please sign-in to your account') }}
           </p>
         </VCardText>
+        
         <VCardText>
-          <VAlert
-            color="primary"
-            variant="tonal"
-          >
-            <p class="text-sm mb-2">
-              Admin Email: <strong>admin@demo.com</strong> / Pass: <strong>admin</strong>
-            </p>
-            <p class="text-sm mb-0">
-              Client Email: <strong>client@demo.com</strong> / Pass: <strong>client</strong>
-            </p>
-          </VAlert>
-        </VCardText>
-        <VCardText>
-          <VForm @submit.prevent="() => { }">
+          <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
               <VCol cols="12">
-                <AppTextField
-                  v-model="form.email"
-                  autofocus
-                  label="Email"
-                  type="email"
-                  placeholder="johndoe@email.com"
-                />
+                <AppTextField v-model="credentials.email" :label="$t('Email')" :placeholder="$t('Email')"
+                  type="email" autofocus :rules="[requiredValidator]" :error-messages="errors.email" />
               </VCol>
 
               <!-- password -->
               <VCol cols="12">
-                <AppTextField
-                  v-model="form.password"
-                  label="Password"
-                  placeholder="············"
+                <AppTextField v-model="credentials.password" :label="$t('Password')" :placeholder="$t('Password')"
+                   :rules="[requiredValidator, minLengthValidator]"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                />
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible" />
 
-                <div class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4">
-                  <VCheckbox
-                    v-model="form.remember"
-                    label="Remember me"
-                  />
-                  <a
-                    class="text-primary ms-2 mb-1"
-                    href="#"
-                  >
-                    Forgot Password?
-                  </a>
+                <div class="d-flex align-center flex-wrap justify-space-between my-6">
+                  <VCheckbox v-model="rememberMe" :label="$t('Remember me')" />
+                  <!-- <RouterLink class="text-primary ms-2 mb-1" :to="{ name: 'forgot-password' }">
+                    {{ $t('Forgot Password ?') }}
+                  </RouterLink> -->
                 </div>
-
-                <VBtn
-                  block
-                  type="submit"
-                >
-                  Login
+                <VBtn block type="submit">
+                  {{ $t('Login') }}
                 </VBtn>
               </VCol>
-
               <!-- create account -->
-              <VCol
-                cols="12"
-                class="text-center"
-              >
-                <span>New on our platform?</span>
-
-                <a
-                  class="text-primary ms-2"
-                  href="#"
-                >
-                  Create an account
-                </a>
-              </VCol>
-              <VCol
-                cols="12"
-                class="d-flex align-center"
-              >
+              <!-- <VCol cols="12" class="text-center">
+                <RouterLink class="text-primary ms-1" :to="{ name: 'register' }">
+                  {{ $t('Create an account') }}
+                </RouterLink>
+              </VCol> -->
+              <!-- <VCol cols="12" class="d-flex align-center">
                 <VDivider />
-                <span class="mx-4">or</span>
+                <span class="mx-4">{{ $t('Or') }}</span>
                 <VDivider />
-              </VCol>
+              </VCol> -->
 
               <!-- auth providers -->
-              <VCol
-                cols="12"
-                class="text-center"
-              >
+              <!-- <VCol cols="12" class="text-center">
                 <AuthProvider />
-              </VCol>
+              </VCol> -->
             </VRow>
           </VForm>
         </VCardText>
