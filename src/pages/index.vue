@@ -24,14 +24,3 @@
   </div>
 </template>
 
-<script>
-const route = useRoute()
-const router = useRouter()
-  if( !useCookie('accessToken').value){
-    router.replace(route.query.to ? String(route.query.to) : '/login')
-
-  }else{
-    router.replace(route.query.to ? String(route.query.to) : '/')
-
-  }
-</script>
