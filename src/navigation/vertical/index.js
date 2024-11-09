@@ -7,6 +7,6 @@ export default [
   {
     title: 'Calender',
     to: { name: 'calender' },
-    icon: { icon: 'tabler-file' },
+    icon: { icon: 'tabler-calendar-month' },
   },
 ]

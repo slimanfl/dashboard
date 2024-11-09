@@ -1,59 +1,89 @@
+import { useCookie } from "@/@core/composable/useCookie";
+import axios from "axios";
+
 export const useCalendarStore = defineStore('calendar', {
   // arrow function recommended for full type inference
   state: () => ({
     availableCalendars: [
       {
         color: 'error',
-        label: 'Personal',
+        label: 'Heros Station',
       },
       {
         color: 'primary',
-        label: 'Business',
+        label: 'Event Station',
       },
       {
         color: 'warning',
-        label: 'Family',
+        label: 'Space Planet',
       },
       {
         color: 'success',
-        label: 'Holiday',
+        label: 'Idol Land',
       },
       {
         color: 'info',
-        label: 'ETC',
+        label: 'Diesny',
       },
     ],
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC'],
+    selectedCalendars: ['Heros Station', 'Event Station', 'Space Planet', 'Idol Land', 'Diesny'],
   }),
   actions: {
     async fetchEvents() {
-      const { data, error } = await useApi(createUrl('/apps/calendar', {
-        query: {
-          calendars: this.selectedCalendars,
-        },
+      const { data, error } = await useApi(createUrl('/events', {
       }))
 
       if (error.value)
         return error.value
-      
       return data.value
     },
+
     async addEvent(event) {
-      await $api('/apps/calendar', {
-        method: 'POST',
-        body: event,
-      })
+      const temp = {
+
+        title:event.title,
+        phone:event.phone,
+        countPerson: Number(event.countPerson),
+        description: event.description,
+        start: event.start,
+        end: event.end ,
+        section: event.section,
+        user_id: useCookie('userData').value._id
+
+      }
+     return await axios.post('https://booking-back-sand.vercel.app/events', 
+      temp,
+        {
+          headers: { 'Authorization': `Bearer ${useCookie('accessToken').value}` }
+      }
+      )
     },
     async updateEvent(event) {
-      return await $api(`/apps/calendar/${event.id}`, {
-        method: 'PUT',
-        body: event,
-      })
+      console.log('eventevent',event);
+      const temp = {
+        title:event.title,
+        phone:event.phone,
+        countPerson: Number(event.countPerson),
+        description: event.description,
+        start: event.start,
+        end: event.end ,
+        _id : event.id,
+        section: event.section,
+        user_id: useCookie('userData').value._id
+      }
+    
+     return await axios.patch(`https://booking-back-sand.vercel.app/events/${temp._id}`, temp,
+        {
+          headers: { 'Authorization': `Bearer ${useCookie('accessToken').value}` }
+      }
+      )
     },
     async removeEvent(eventId) {
-      return await $api(`/apps/calendar/${eventId}`, {
-        method: 'DELETE',
-      })
+      return await axios.delete(`https://booking-back-sand.vercel.app/events/${eventId}`,
+        {
+          headers: { 'Authorization': `Bearer ${useCookie('accessToken').value}` }
+      }
+      )
     },
   },
 })

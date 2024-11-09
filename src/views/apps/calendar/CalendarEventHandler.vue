@@ -2,12 +2,6 @@
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { VForm } from 'vuetify/components/VForm'
 import { useCalendarStore } from './useCalendarStore'
-import avatar1 from '@images/avatars/avatar-1.png'
-import avatar2 from '@images/avatars/avatar-2.png'
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar5 from '@images/avatars/avatar-5.png'
-import avatar6 from '@images/avatars/avatar-6.png'
-import avatar7 from '@images/avatars/avatar-7.png'
 
 // 👉 store
 const props = defineProps({
@@ -51,6 +45,7 @@ const removeEvent = () => {
 }
 
 const handleSubmit = () => {
+  console.log('handleSubmit',event.value);
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
 
@@ -68,32 +63,6 @@ const handleSubmit = () => {
   })
 }
 
-const guestsOptions = [
-  {
-    avatar: avatar1,
-    name: 'Jane Foster',
-  },
-  {
-    avatar: avatar3,
-    name: 'Donna Frank',
-  },
-  {
-    avatar: avatar5,
-    name: 'Gabrielle Robertson',
-  },
-  {
-    avatar: avatar7,
-    name: 'Lori Spears',
-  },
-  {
-    avatar: avatar6,
-    name: 'Sandy Vega',
-  },
-  {
-    avatar: avatar2,
-    name: 'Cheryl May',
-  },
-]
 
 // 👉 Form
 const onCancel = () => {
@@ -181,26 +150,26 @@ const dialogModelValueUpdate = val => {
                   v-model="event.title"
                   label="Title"
                   placeholder="Meeting with Jane"
-                  :rules="[requiredValidator]"
+                  
                 />
               </VCol>
 
-              <!-- 👉 Calendar -->
+              <!-- 👉 section -->
               <VCol cols="12">
                 <AppSelect
-                  v-model="event.extendedProps.calendar"
+                  v-model="event.section"
                   label="Label"
                   placeholder="Select Event Label"
-                  :rules="[requiredValidator]"
+                  
                   :items="store.availableCalendars"
                   :item-title="item => item.label"
                   :item-value="item => item.label"
                 >
                   <template #selection="{ item }">
                     <div
-                      v-show="event.extendedProps.calendar"
+                      v-show="event.section"
                       class="align-center"
-                      :class="event.extendedProps.calendar ? 'd-flex' : ''"
+                      :class="event.section ? 'd-flex' : ''"
                     >
                       <VIcon
                         :color="item.raw.color"
@@ -231,7 +200,7 @@ const dialogModelValueUpdate = val => {
                 <AppDateTimePicker
                   :key="JSON.stringify(startDateTimePickerConfig)"
                   v-model="event.start"
-                  :rules="[requiredValidator]"
+                  
                   label="Start date"
                   placeholder="Select Date"
                   :config="startDateTimePickerConfig"
@@ -243,60 +212,40 @@ const dialogModelValueUpdate = val => {
                 <AppDateTimePicker
                   :key="JSON.stringify(endDateTimePickerConfig)"
                   v-model="event.end"
-                  :rules="[requiredValidator]"
+                  
                   label="End date"
                   placeholder="Select End Date"
                   :config="endDateTimePickerConfig"
                 />
               </VCol>
 
-              <!-- 👉 All day -->
-              <VCol cols="12">
-                <VSwitch
-                  v-model="event.allDay"
-                  label="All day"
-                />
-              </VCol>
+         
 
-              <!-- 👉 Event URL -->
-              <VCol cols="12">
-                <AppTextField
-                  v-model="event.url"
-                  label="Event URL"
-                  placeholder="https://event.com/meeting"
-                  :rules="[urlValidator]"
-                  type="url"
-                />
-              </VCol>
 
-              <!-- 👉 Guests -->
-              <VCol cols="12">
-                <AppSelect
-                  v-model="event.extendedProps.guests"
-                  label="Guests"
-                  placeholder="Select guests"
-                  :items="guestsOptions"
-                  :item-title="item => item.name"
-                  :item-value="item => item.name"
-                  chips
-                  multiple
-                  eager
-                />
-              </VCol>
+        
 
               <!-- 👉 Location -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="event.extendedProps.location"
-                  label="Location"
-                  placeholder="Meeting room"
+                  v-model="event.phone"
+                  label="Phone"
+                  placeholder="Phone"
+                />
+              </VCol>
+                  <!-- 👉 Location -->
+                  <VCol cols="12">
+                <AppTextField
+                  v-model="event.countPerson"
+                  label="Count Person"
+                  placeholder="Count Person"
+                  type="number"
                 />
               </VCol>
 
               <!-- 👉 Description -->
               <VCol cols="12">
                 <AppTextarea
-                  v-model="event.extendedProps.description"
+                  v-model="event.description"
                   label="Description"
                   placeholder="Meeting description"
                 />

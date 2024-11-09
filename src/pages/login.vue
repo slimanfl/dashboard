@@ -39,7 +39,7 @@ const router = useRouter()
 // const ability = useAbility()
 
 const errors = ref({
-  email: undefined,
+  username: undefined,
   password: undefined,
 })
  const minLengthValidator=(value) => {
@@ -54,7 +54,7 @@ const alerDialogFault = ref(false)
 const refVForm = ref()
 
 const credentials = ref({
-  email: '',
+  username: '',
   password: '',
 })
 
@@ -62,10 +62,10 @@ const rememberMe = ref(false)
 
 const login = async () => {
   
-  const res =await $api(`http://localhost:3000/sign-in`,{
+  const res =await $api(`https://booking-back-sand.vercel.app/auth/login`,{
     method:'post',
     body:{
-      email:credentials.value.email,
+      username:credentials.value.username,
       password:credentials.value.password
     }})
  
@@ -73,11 +73,8 @@ const login = async () => {
     console.log(res)
         Messageres.value = 'login successfully'
         alerDialogSuccess.value = true
-        // useCookie('userAbilityRules').value = userAbilityRules
-        // ability.update(userAbilityRules)
-        useCookie('userData').value = res.data
-        useCookie('accessToken').value = res.token
-        // window.localStorage.setItem('permissions', JSON.stringify(res.data.data.permissions))
+        useCookie('userData').value = res.data.user
+        useCookie('accessToken').value = res.data.token
         nextTick(() => {
           router.replace(route.query.to ? String(route.query.to) : '/calender')
         })
@@ -158,10 +155,10 @@ const changeLanguage = (lang) => {
         <VCardText>
           <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
-              <!-- email -->
+              <!-- username -->
               <VCol cols="12">
-                <AppTextField v-model="credentials.email" :label="$t('Email')" :placeholder="$t('Email')"
-                  type="email" autofocus :rules="[requiredValidator]" :error-messages="errors.email" />
+                <AppTextField v-model="credentials.username" :label="$t('UserName')" :placeholder="$t('UserName')"
+                  type="username" autofocus :rules="[requiredValidator]" :error-messages="errors.username" />
               </VCol>
 
               <!-- password -->
