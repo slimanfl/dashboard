@@ -7,26 +7,26 @@ export const useCalendarStore = defineStore('calendar', {
     availableCalendars: [
       {
         color: 'error',
-        label: 'Heros Station',
+        label: 'HerosStation',
       },
       {
         color: 'primary',
-        label: 'Event Station',
+        label: 'EventStation',
       },
       {
         color: 'warning',
-        label: 'Space Planet',
+        label: 'SpacePlanet',
       },
       {
         color: 'success',
-        label: 'Idol Land',
+        label: 'IdolLand',
       },
       {
         color: 'info',
         label: 'Diesny',
       },
     ],
-    selectedCalendars: ['Heros Station', 'Event Station', 'Space Planet', 'Idol Land', 'Diesny'],
+    selectedCalendars: ['HerosStation', 'EventStation', 'SpacePlanet', 'IdolLand', 'Diesny'],
   }),
   actions: {
     async fetchEvents() {
