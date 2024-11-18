@@ -48,8 +48,8 @@ export const useCalendarStore = defineStore('calendar', {
         start: event.start,
         end: event.end ,
         section: event.section,
+        reciver_id: event.reciver_id,
         user_id: useCookie('userData').value._id
-
       }
      return await axios.post('https://booking-back-sand.vercel.app/events', 
       temp,
@@ -69,7 +69,7 @@ export const useCalendarStore = defineStore('calendar', {
         end: event.end ,
         _id : event.id,
         section: event.section,
-        user_id: useCookie('userData').value._id
+        reciver_id: event.reciver_id
       }
     
      return await axios.patch(`https://booking-back-sand.vercel.app/events/${temp._id}`, temp,

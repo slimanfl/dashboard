@@ -42,12 +42,6 @@ const errors = ref({
   username: undefined,
   password: undefined,
 })
- const minLengthValidator=(value) => {
-  if (value && value.length < 8) {
-        return 'Password must be at least 8 characters long.';
-      }
-      return true; // Validation passed
-  }
 const Messageres = ref('')
 const alerDialogSuccess = ref(false)
 const alerDialogFault = ref(false)
@@ -106,7 +100,6 @@ const changeLanguage = (lang) => {
     </VAlert>
   </div>
   <div class="auth-logo d-flex align-center gap-x-3">
-  
     <h1 class="auth-title">
       {{ themeConfig.app.title }}
     </h1>
@@ -145,17 +138,16 @@ const changeLanguage = (lang) => {
       <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
           <h4 class="text-h4 mb-1">
-            {{ $t('Welcome to') }} <span class="text-capitalize"> Dasborad </span>! 👋🏻
+            {{ $t('Welcome to') }} <span class="text-capitalize">Heros Station</span>! 👋🏻
           </h4>
           <p class="mb-0">
             {{ $t('Please sign-in to your account') }}
           </p>
         </VCardText>
-        
+     
         <VCardText>
           <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
-              <!-- username -->
               <VCol cols="12">
                 <AppTextField v-model="credentials.username" :label="$t('UserName')" :placeholder="$t('UserName')"
                   type="username" autofocus :rules="[requiredValidator]" :error-messages="errors.username" />
@@ -179,22 +171,7 @@ const changeLanguage = (lang) => {
                   {{ $t('Login') }}
                 </VBtn>
               </VCol>
-              <!-- create account -->
-              <!-- <VCol cols="12" class="text-center">
-                <RouterLink class="text-primary ms-1" :to="{ name: 'register' }">
-                  {{ $t('Create an account') }}
-                </RouterLink>
-              </VCol> -->
-              <!-- <VCol cols="12" class="d-flex align-center">
-                <VDivider />
-                <span class="mx-4">{{ $t('Or') }}</span>
-                <VDivider />
-              </VCol> -->
-
-              <!-- auth providers -->
-              <!-- <VCol cols="12" class="text-center">
-                <AuthProvider />
-              </VCol> -->
+        
             </VRow>
           </VForm>
         </VCardText>
@@ -206,3 +183,4 @@ const changeLanguage = (lang) => {
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
 </style>
+

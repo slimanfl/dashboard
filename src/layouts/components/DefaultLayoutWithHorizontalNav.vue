@@ -48,6 +48,7 @@ watch([
       />
 
       <NavbarThemeSwitcher class="me-2" />
+      <NavBarNotifications class="me-2" />
       <UserProfile />
     </template>
 

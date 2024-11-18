@@ -1,1 +1,32 @@
+
 // Write your overrides
+.login-header{
+  display: flex;
+  width: 75.8%;
+  justify-content: end;
+  position: absolute;
+  z-index: 2;
+  padding:2rem 10px;
+}
+@media (max-width:768px) {
+  .login-header{
+      width: 100%;
+  } 
+}
+.bg-g{
+  background-color: #f2f2f2  !important;
+}
+.layout-vertical-nav.overlay-nav{
+  opacity: 0 !important;
+}
+.layout-vertical-nav.overlay-nav.visible{
+  opacity: 1 !important;
+}
+.error-login{
+  position: fixed;
+  left: 50%;
+  width: 50%;
+  top: 10%;
+  z-index: 999;
+  transform: translate(-50%,-50%);
+}
